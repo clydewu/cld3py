@@ -8,7 +8,8 @@ DATE_FMT = '%Y-%m-%d'
 TIME_FMT = '%H:%M'
 DT_FMT = f'{DATE_FMT} {TIME_FMT}:%S'
 LOG_DT_FMT = f'{DT_FMT},%03d'
-LOG_FMT_NO_DT = '[%(levelname)7s][%(request_id)s][%(name)s][%(filename)s::%(funcName)s(%(lineno)s)]: %(message)s'
+# LOG_FMT_NO_DT = '[%(levelname)7s][%(request_id)s][%(name)s][%(filename)s::%(funcName)s(%(lineno)s)]: %(message)s'
+LOG_FMT_NO_DT = '[%(levelname)7s][%(name)s][%(filename)s::%(funcName)s(%(lineno)s)]: %(message)s'
 LOG_FMT = '[%(asctime)s]' + LOG_FMT_NO_DT
 
 

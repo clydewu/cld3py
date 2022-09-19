@@ -9,11 +9,12 @@ from flask_mongoengine import MongoEngine
 from flask_cors import CORS
 from flask_restx import Api
 from flask_apscheduler import APScheduler
+from flask_log_request_id import RequestID, RequestIDLogFilter
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.mongodb import MongoDBJobStore
 import urllib3
 
-from const import DEFAULT_APP_NAME, APS_EVENT_CODE, LOGGER_JOB
+from const import DEFAULT_APP_NAME, APS_EVENT_CODE, LOGGER_JOB, LOG_FMT
 
 scheduler = APScheduler(scheduler=BackgroundScheduler())
 
@@ -22,7 +23,7 @@ class AppFactory(metaclass=ABCMeta):
     def create_app(self, name=DEFAULT_APP_NAME):
         app = Flask(name or __name__)
         CORS(app)
-        # self.__setup_main_logger(app, logging.DEBUG)
+        self.__setup_main_logger(app, logging.DEBUG)
         app.db = MongoEngine(app, app.config)
 
         app.csw_api = csw_api = Api(app, title=DEFAULT_APP_NAME)
@@ -35,21 +36,21 @@ class AppFactory(metaclass=ABCMeta):
         urllib3.disable_warnings()
         return app
 
-    # def __setup_main_logger(self, app, level=logging.INFO):
-    #     logger = app.logger
-    #     logger.removeHandler(default_handler)
-    #     self.__setup_logger(app, logger.name, level)
+    def __setup_main_logger(self, app, level=logging.INFO):
+        logger = app.logger
+        logger.removeHandler(default_handler)
+        self.__setup_logger(app, logger.name, level)
 
-    # def __setup_logger(self, app, logger_name, level=logging.INFO):
-    #     logger = logging.getLogger(logger_name)
-    #     logger.setLevel(level)
+    def __setup_logger(self, app, logger_name, level=logging.INFO):
+        logger = logging.getLogger(logger_name)
+        logger.setLevel(level)
 
-    #     stream_handler = logging.StreamHandler()
-    #     stream_handler.setFormatter(logging.Formatter(fmt=LOG_FMT))
-    #     # stream_handler.addFilter(RequestIDLogFilter())
-    #     logger.addHandler(stream_handler)
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(logging.Formatter(fmt=LOG_FMT))
+        # stream_handler.addFilter(RequestIDLogFilter())
+        logger.addHandler(stream_handler)
 
-    #     return logger
+        return logger
 
     def __init_apscheduler(self, app):
         app.scheduler = scheduler

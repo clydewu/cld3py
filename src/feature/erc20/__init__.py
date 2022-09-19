@@ -9,9 +9,9 @@ from .job import main_job
 
 
 def init_app(app, api):
-    # app.w3 = Web3(WebsocketProvider(f'{os.environ["WSS_ENDPOINT_URL"]}'))
-    app.w3 = Web3(HTTPProvider(f'{os.environ["HTTPS_ENDPOINT_URL"]}'))
-    app.w3.eth.get_block('latest')
+    app.w3 = Web3(WebsocketProvider(f'{os.environ["WSS_ENDPOINT_URL"]}'))
+    # app.w3 = Web3(HTTPProvider(f'{os.environ["HTTPS_ENDPOINT_URL"]}'))
+    # app.web3.eth.get_block('latest')
 
     app.scheduler.add_job(
         main_job.__name__,
