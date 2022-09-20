@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from abc import ABCMeta, abstractmethod
 import logging
 import logging.handlers
 
@@ -9,16 +8,17 @@ from flask_mongoengine import MongoEngine
 from flask_cors import CORS
 from flask_restx import Api
 from flask_apscheduler import APScheduler
-from flask_log_request_id import RequestID, RequestIDLogFilter
 from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.jobstores.mongodb import MongoDBJobStore
+# from flask_log_request_id import RequestID, RequestIDLogFilter
+# from apscheduler.schedulers.gevent import GeventScheduler
+# from apscheduler.jobstores.mongodb import MongoDBJobStore
 import urllib3
 
-from const import DEFAULT_APP_NAME, APS_EVENT_CODE, LOGGER_JOB, LOG_FMT
+from const import DEFAULT_APP_NAME, APS_EVENT_CODE, LOG_FMT
 
 scheduler = APScheduler(scheduler=BackgroundScheduler())
 
-class AppFactory(metaclass=ABCMeta):
+class AppFactory():
 
     def create_app(self, name=DEFAULT_APP_NAME):
         app = Flask(name or __name__)
@@ -70,6 +70,8 @@ class AppFactory(metaclass=ABCMeta):
 
 
     def __init_modules(self, app, api):
-        from feature.erc20 import init_app as init_erc20
+        from ext.ethereum import init_app as init_ethereum
+        from feature.crawler import init_app as init_crawler
 
-        init_erc20(app, api)
+        init_ethereum(app)
+        init_crawler(app)
