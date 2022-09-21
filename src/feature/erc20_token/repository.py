@@ -1,14 +1,20 @@
 # -*- coding: UTF-8 -*-
 
-from .model import ECR20Token
+from .model import ERC20Token
 
 class ERC20TokenRepository():
     @staticmethod
     def get_all():
-        return ECR20Token.objects()
+        return ERC20Token.objects()
 
     @staticmethod
     def get_by_address(address):
-        return ECR20Token.objects(address=address).first()
+        return ERC20Token.objects(address=address).first()
 
-    
+    @staticmethod
+    def new(address=None, name=None, symbol=None, decimals=None):
+        return ERC20Token(address=address, name=name, symbol=symbol, decimals=decimals)
+
+    @staticmethod
+    def save(token):
+        return token.save()

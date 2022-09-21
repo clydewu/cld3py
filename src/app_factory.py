@@ -1,4 +1,6 @@
 # -*- coding: UTF-8 -*-
+import os
+import json
 import logging
 import logging.handlers
 
@@ -24,6 +26,7 @@ class AppFactory():
         app = Flask(name or __name__)
         CORS(app)
         self.__setup_main_logger(app, logging.DEBUG)
+        app.config['MONGODB_SETTINGS'] = json.loads(os.environ['MONGODB_SETTINGS'])
         app.db = MongoEngine(app, app.config)
 
         app.csw_api = csw_api = Api(app, title=DEFAULT_APP_NAME)

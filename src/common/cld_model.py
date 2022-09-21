@@ -15,3 +15,8 @@ class CLDDocument(Document):
         'abstract': True,
         'queryset_class': CLDQuerySet
     }
+
+    def update_attr(self, attrs: dict):
+        for key, val in attrs.items():
+            setattr(self, key, val)
+        return self
