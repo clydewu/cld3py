@@ -40,10 +40,10 @@ class ERC20Analyzer(BaseERCAnalyzer):
         app.logger.info(f'Get a Transfer event, token: {token.symbol}, from: {from_addr}, to: {to_addr}, value: {value}')
 
         try:
-            from_address = self.crawler.upert_address_balance(from_addr)
-            from_addr_token = self.upert_addr_token_balance(from_addr, token)
-            to_address = self.crawler.upert_address_balance(to_addr)
-            to_addr_token = self.upert_addr_token_balance(to_addr, token)
+            from_address = self.crawler.get_address_balance(from_addr)
+            from_addr_token = self.get_addr_token_balance(from_addr, token)
+            to_address = self.crawler.get_address_balance(to_addr)
+            to_addr_token = self.get_addr_token_balance(to_addr, token)
             receipt = ReceiptLogRepository.create(dict(
                 transaction=self.w3.toHex(receipt_log.transactionHash),
                 log_index=receipt_log.logIndex,
@@ -66,12 +66,14 @@ class ERC20Analyzer(BaseERCAnalyzer):
         ERC20TokenRepository.save(token)
         self.addr_to_token[token.address] = token
 
-    def upert_addr_token_balance(self, addr_str, token):
+    def get_addr_token_balance(self, addr_str, token):
         if not (to_addr_token := AddressTokenRepository.get(addr_str, token)):
             app.logger.info(f'Get a address/token pair, create it, addr: {addr_str}, token: {token.name}')
             to_addr_token = AddressTokenRepository.create(dict(
                 address=addr_str,
                 token=token,
+                balance=token.contract.functions.balanceOf(addr_str).call()
             ))
-        to_addr_token.balance = token.contract.functions.balanceOf(addr_str).call()
-        AddressTokenRepository.save(to_addr_token)
+        return to_addr_token
+        # to_addr_token.balance = token.contract.functions.balanceOf(addr_str).call()
+        # AddressTokenRepository.save(to_addr_token)

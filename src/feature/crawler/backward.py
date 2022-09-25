@@ -22,8 +22,8 @@ class BackwardCrawler(BaseCrawler):
                     for txn in block.transactions:
                         transaction = self.w3.eth.get_transaction(txn)
                         receipt = self.w3.eth.get_transaction_receipt(txn)
-                        from_address = self.upert_address_balance(transaction['from']) if transaction['from'] else None
-                        to_address = self.upert_address_balance(transaction['to']) if transaction['to'] else None
+                        from_address = self.get_address_balance(transaction['from']) if transaction['from'] else None
+                        to_address = self.get_address_balance(transaction['to']) if transaction['to'] else None
                         TransactionRepository.create(dict(
                             hash=self.w3.toHex(txn),
                             block=block_doc,

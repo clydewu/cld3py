@@ -32,12 +32,13 @@ class BaseCrawler(metaclass=ABCMeta):
             except Exception as err:
                 app.logger.warn(f'Receipt can not be analyzed by this analyzer, address: {receipt_log.address}, analyzer: {analyzer.name}, err: {err}')
 
-    def upert_address_balance(self, addr_str):
+    def get_address_balance(self, addr_str):
         if not (address := AddressRepository.get_by_addr(addr_str)):
             app.logger.info(f'Get a new address, create it, addr: {addr_str}')
             address = AddressRepository.create(dict(
-                address=addr_str
+                address=addr_str,
+                balance=self.w3.eth.get_balance(addr_str)
             ))
-        address.balance=self.w3.eth.get_balance(addr_str)
-        AddressRepository.save(address)
+        # address.balance=self.w3.eth.get_balance(addr_str)
+        # AddressRepository.save(address)
         return address
